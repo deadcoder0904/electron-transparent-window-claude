@@ -137,3 +137,5 @@ dist
 
 # Ignore yek
 .yek
+
+.DS_Store
