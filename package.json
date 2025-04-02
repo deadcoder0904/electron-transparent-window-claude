@@ -1,0 +1,12 @@
+{
+  "name": "electron-transparent-overlay",
+  "version": "1.0.0",
+  "description": "Transparent overlay that allows interaction with content underneath",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^27.0.0"
+  }
+}
