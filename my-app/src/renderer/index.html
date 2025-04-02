@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Transparent Overlay</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+    <link href="./assets/main.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Your overlay content goes here -->
+      <div class="overlay-content">
+        <h1>Transparent Overlay</h1>
+        <p>This is a transparent window overlay</p>
+      </div>
+    </div>
+    <script type="module" src="./src/renderer.ts"></script>
+  </body>
+</html>
