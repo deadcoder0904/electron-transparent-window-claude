@@ -1,12 +1,9 @@
-// preload.ts
-import { contextBridge } from "electron";
-import { enable, initialize } from "@electron/remote/main";
+// src/preload/index.ts
+import { contextBridge, ipcRenderer } from 'electron'
+import { CHANNELS } from '../shared/constants'
 
-// Initialize and enable @electron/remote
-initialize();
-enable();
-
-// If you need to expose any APIs to the renderer process
-contextBridge.exposeInMainWorld("electronAPI", {
-	// Add any APIs you want to expose here
-});
+contextBridge.exposeInMainWorld('electronAPI', {
+	toggleMouseEvents: () => ipcRenderer.send(CHANNELS.TOGGLE_MOUSE),
+	onToggleMouseUpdated: (callback: any) =>
+		ipcRenderer.on(CHANNELS.MOUSE_UPDATED, (_, value) => callback(value)),
+})

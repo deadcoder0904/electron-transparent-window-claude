@@ -3,7 +3,7 @@ ignore_patterns:
   - dist/**
   - bun.lock
   - yek.yaml
-  - my-app/**
+  - release/**
 
 # Configure Git-based priority boost (optional)
 git_boost_max: 50 # Maximum score boost based on Git history (default: 100)

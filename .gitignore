@@ -139,3 +139,6 @@ dist
 .yek
 
 .DS_Store
+
+# Release
+release/

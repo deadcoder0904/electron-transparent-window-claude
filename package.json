@@ -1,5 +1,6 @@
 {
 	"name": "electron-transparent-overlay",
+	"author": "Your Name <your.email@example.com>",
 	"version": "1.0.0",
 	"description": "Transparent overlay that allows interaction with content underneath",
 	"main": "dist/main/index.js",
@@ -17,5 +18,16 @@
 		"typescript": "^5.8.2",
 		"vite": "^6.2.4",
 		"vite-plugin-electron": "^0.29.0"
+	},
+	"build": {
+		"appId": "com.yourname.electron-transparent-overlay",
+		"files": [
+			"dist/**/*",
+			"package.json"
+		],
+		"directories": {
+			"output": "release",
+			"buildResources": "resources"
+		}
 	}
 }
