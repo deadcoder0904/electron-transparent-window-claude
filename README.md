@@ -22,4 +22,5 @@ bun run dev
 bun run build
 ```
 
-And then open up the `electron-transparent-overlay.app` in `release/mac-arm64` folder.
+And then open up the `electron-transparent-overlay.app` in `release/mac-arm64`
+folder.
