@@ -1,0 +1,116 @@
+@import 'tailwindcss';
+
+/* 1) Project tokens (root CSS variables used by theme) */
+:root {
+  /* layout */
+  --bar-height: 44px;
+
+  /* palette */
+  --bg-0: #070c16;
+  --bg-1: #0b1224;
+  --bg-2: #0d1325;
+
+  /* text */
+  --text: #cdd7ff;
+  --muted: #7b8aaa;
+
+  /* chrome */
+  --divider: rgba(255, 255, 255, 0.08);
+  --glow: #00ffd1;
+  --glow-2: #7a5cff;
+
+  /* buttons */
+  --btn-text: #dafcff;
+  --btn-border: rgba(0, 255, 209, 0.35);
+  --btn-bg: #121a32;
+
+  /* effects */
+  --section-blur: 12px;
+}
+
+/* 2) Tailwind v4 theme (utilities generated from tokens) */
+@theme inline {
+  /* fonts */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+
+  /* radius/spacing primitives if needed */
+  --radius-lg: 0.5rem;
+
+  /* colors mapped to utilities */
+  --color-neon: var(--glow); /* text-neon, bg-neon */
+  --color-neon-2: var(--glow-2); /* text-neon-2, border-neon-2 */
+  --color-panel: var(--bg-0); /* bg-panel */
+  --color-muted: var(--muted); /* text-muted */
+  --color-divider: var(--divider); /* border-divider */
+  --color-body: var(--text); /* text-body */
+
+  /* button + code tokens */
+  --color-btn-text: var(--btn-text); /* text-btn-text */
+  --color-btn-border: var(--btn-border); /* border-btn-border */
+  --color-code-fg: #d6f6ff; /* text-code-fg */
+
+  /* shadows */
+  --shadow-btn-base: 0 0 0 2px rgba(0, 0, 0, 0.3),
+    0 6px 18px rgba(0, 0, 0, 0.35);
+  --shadow-btn-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-btn-hover: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 12px rgba(0, 255, 209, 0.28), 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-code: inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 0 2px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.45),
+    0 0 24px -8px rgba(0, 255, 209, 0.18);
+
+  /* gradients as tokens (used via bg-[var(--gradient-*)] when needed) */
+  --gradient-panel: linear-gradient(
+    180deg,
+    rgba(18, 24, 44, 0.75),
+    rgba(14, 18, 33, 0.65)
+  );
+  --gradient-code: linear-gradient(135deg, #0d1222 0%, #071017 100%);
+  --gradient-btn: linear-gradient(180deg, var(--color-btn-bg), #0b1224);
+  --gradient-topbar: linear-gradient(180deg, #121a32 0%, #0d1325 100%);
+
+  /* button bg base used by --gradient-btn */
+  --color-btn-bg: var(--btn-bg);
+}
+
+/* 3) Base */
+:root {
+  color-scheme: dark;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+/* 4) Components and small utilities */
+/* Label for code blocks */
+pre::before {
+  content: 'CODE';
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+/* 5) Layout chrome */
+.topbar-neo {
+  @apply fixed top-0 left-0 w-full z-10 box-border border-b;
+  border-bottom-color: var(--divider);
+  height: var(--bar-height);
+  background: var(--gradient-topbar);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), inset 0 -1px 0 0 var(--divider);
+}

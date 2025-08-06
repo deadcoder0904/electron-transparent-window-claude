@@ -2,85 +2,11 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Transparent Overlay</title>
-		<style>
-			:root {
-				--primary-color: #2e7d32;
-				--primary-hover: #1b5e20;
-				--primary-active: #388e3c;
-				--danger-color: #d32f2f;
-				--danger-hover: #b71c1c;
-				--text-light: #ffffff;
-				--bg-opacity: 0.3;
-				--control-bg: rgba(255, 255, 255, 0.8);
-				--transition-time: 0.2s;
-			}
-
-			body {
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-				background-color: rgba(128, 128, 128, var(--bg-opacity));
-				user-select: none;
-				-webkit-app-region: drag;
-				height: 100vh;
-				width: 100vw;
-				position: relative;
-				font-family:
-					-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-			}
-
-			#controls {
-				position: absolute;
-				top: 10px;
-				right: 10px;
-				background-color: var(--control-bg);
-				padding: 8px;
-				border-radius: 6px;
-				-webkit-app-region: no-drag;
-				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-			}
-
-			button {
-				background-color: var(--primary-color);
-				border: none;
-				color: var(--text-light);
-				padding: 6px 12px;
-				text-align: center;
-				font-size: 13px;
-				margin: 3px;
-				cursor: pointer;
-				border-radius: 4px;
-				transition: background-color var(--transition-time) ease;
-				font-weight: 500;
-			}
-
-			button:hover {
-				background-color: var(--primary-hover);
-			}
-
-			button:active {
-				background-color: var(--primary-active);
-			}
-
-			button.active {
-				background-color: var(--primary-active);
-			}
-
-			#exit {
-				background-color: var(--danger-color);
-			}
-
-			#exit:hover {
-				background-color: var(--danger-hover);
-			}
-		</style>
+		<title>Overlay with Two Sections</title>
+		<meta name="color-scheme" content="light dark" />
 	</head>
-	<body>
-		<div id="controls">
-			<button id="toggleInteraction">Toggle Mouse (⌘⌥M)</button>
-			<button id="exit">Exit (ESC)</button>
-		</div>
-		<script type="module" src="./app.ts"></script>
+	<body class="min-h-screen w-screen overflow-hidden">
+		<div id="root"></div>
+		<script type="module" src="./main.tsx"></script>
 	</body>
 </html>
