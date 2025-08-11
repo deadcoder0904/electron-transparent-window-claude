@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+@import './theme.css';
+@import './base.css';
+
+body {
+  background: transparent;
+}
+
+.topbar-neo {
+  @apply fixed top-0 left-0 w-full z-10 box-border border-b flex items-center;
+  padding: 8px 0;
+  border-bottom-color: var(--divider);
+  height: var(--bar-height);
+  background: var(--gradient-topbar);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), inset 0 -1px 0 0 var(--divider);
+}

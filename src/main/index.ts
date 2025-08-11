@@ -1,6 +1,12 @@
 // src/main/index.ts
-import { app, BrowserWindow, globalShortcut, ipcMain, screen } from 'electron'
-import type { Rectangle } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  globalShortcut,
+  ipcMain,
+  Rectangle,
+  screen,
+} from 'electron'
 import path from 'node:path'
 import { enable, initialize } from '@electron/remote/main'
 import { CHANNELS } from '../shared/constants'
@@ -8,208 +14,240 @@ import { CHANNELS } from '../shared/constants'
 // Initialize @electron/remote
 initialize()
 
-let mainWindow: BrowserWindow | null = null
-let isIgnoringMouseEvents = false // Start interactive by default
-let interactiveRegions: Rectangle[] = []
+const TOP_BAR_HEIGHT = 56
 
-function createWindow() {
-	const primaryDisplay = screen.getPrimaryDisplay()
-	const { width, height } = primaryDisplay.workAreaSize
-
-	mainWindow = new BrowserWindow({
-		width: width,
-		height: height,
-		frame: false,
-		transparent: true,
-		alwaysOnTop: true,
-		// Improve text selection behavior behind transparent window on macOS
-		acceptFirstMouse: true,
-		disableAutoHideCursor: true,
-		webPreferences: {
-			nodeIntegration: true,
-			// Use contextIsolation for security; disable preload in dev to avoid missing dist file
-			contextIsolation: true,
-			preload: path.join(__dirname, '../preload/index.mjs'),
-		},
-	})
-
-	// Enable remote module for this window
-	if (mainWindow) {
-		enable(mainWindow.webContents)
-	}
-
-	// Start with normal interaction everywhere
-	mainWindow.setIgnoreMouseEvents(false)
-
-	// Ensure renderer receives initial state after load
-	mainWindow.webContents.on('did-finish-load', () => {
-		mainWindow?.webContents.send(CHANNELS.MOUSE_UPDATED, true)
-	})
-
-	// DevTools: not opened by default. Use manual shortcut from OS menu or Electron shortcuts if needed.
-	// mainWindow.webContents.openDevTools({ mode: 'detach' })
-
-	// Load the renderer
-	if (process.env.NODE_ENV === 'development') {
-		// Ensure we hit the renderer index served by electron-vite dev server
-		const devUrl = 'http://localhost:5173/index.html'
-		console.log('[main] Loading renderer from', devUrl)
-		mainWindow.loadURL(devUrl)
-	} else {
-		// Production - load the built index.html
-		mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
-	}
-
-	// Register global shortcut for toggling click-through: try Shift variant for macOS reliability
-	globalShortcut.register('CommandOrControl+Shift+M', () => {
-		// Log explicit state before toggling (current -> next)
-		const nextState = !isIgnoringMouseEvents
-		// nextState true means we are about to enable click-through
-		console.log(`Click-through ${nextState ? 'enabled' : 'disabled'} (via ⌘⇧M)`)
-		toggleMouseEvents()
-	})
-
-	// Register escape key to exit the app
-	globalShortcut.register('Escape', () => {
-		app.quit()
-	})
-
-	// Opacity adjustment helpers
-	const adjustOpacity = (delta: number) => {
-		if (!mainWindow) return
-		const current = mainWindow.getOpacity?.() ?? 1
-		const next = Math.min(
-			1,
-			Math.max(0.1, Number((current + delta).toFixed(2))),
-		)
-		if (typeof mainWindow.setOpacity === 'function') {
-			mainWindow.setOpacity(next)
-			console.log(`Opacity set to ${next}`)
-		} else {
-			console.log('Window opacity not supported on this platform/build.')
-		}
-	}
-
-	// Decrease opacity: CommandOrControl+[
-	globalShortcut.register('CommandOrControl+[', () => {
-		console.log('Opacity shortcut: decrease')
-		adjustOpacity(-0.1)
-	})
-
-	// Increase opacity: CommandOrControl+]
-	globalShortcut.register('CommandOrControl+]', () => {
-		console.log('Opacity shortcut: increase')
-		adjustOpacity(0.1)
-	})
-
-	/* Set up IPC to allow renderer to toggle mouse events */
-	ipcMain.on(CHANNELS.TOGGLE_MOUSE, () => {
-		toggleMouseEvents()
-	})
-
-	// Exit app from renderer request
-	ipcMain.on('exit-app', () => app.quit())
-
-	// Throttled updater to reduce region re-application frequency on Windows
-	let lastRegionApply = 0
-	const applyRegionsThrottled = (regions: Rectangle[]) => {
-		const now = Date.now()
-		if (now - lastRegionApply < 50) return
-		lastRegionApply = now
-		if (process.platform === 'win32' && mainWindow && isIgnoringMouseEvents) {
-			;(
-				mainWindow as unknown as {
-					setIgnoreMouseEvents: (
-						ignore: boolean,
-						options?: { forward?: boolean; region?: Rectangle[] },
-					) => void
-				}
-			).setIgnoreMouseEvents(true, {
-				forward: true,
-				region: regions,
-			})
-		}
-	}
-
-	/* Listen for updated interactive regions (button/top-bar rects) from renderer */
-	ipcMain.on(
-		CHANNELS.UPDATE_INTERACTIVE,
-		(_event: Electron.IpcMainEvent, regions: Rectangle[]) => {
-			interactiveRegions = regions
-			// Only Windows respects regions; on macOS full-window click-through applies
-			applyRegionsThrottled(interactiveRegions)
-		},
-	)
-
-	mainWindow.on('closed', () => {
-		mainWindow = null
-	})
+// --- State Management ---
+const state = {
+  windows: {
+    topBar: null as BrowserWindow | null,
+    content: null as BrowserWindow | null,
+  },
+  isInteractive: true, // true = interactive, false = click-through
 }
 
-function toggleMouseEvents() {
-	if (!mainWindow) return
-	isIgnoringMouseEvents = !isIgnoringMouseEvents
+// --- Window Creation ---
 
-	if (isIgnoringMouseEvents) {
-		// When enabling click-through:
-		if (process.platform === 'win32') {
-			// Windows supports region-based carve-outs
-			;(
-				mainWindow as unknown as {
-					setIgnoreMouseEvents: (
-						ignore: boolean,
-						options?: { forward?: boolean; region?: Rectangle[] },
-					) => void
-				}
-			).setIgnoreMouseEvents(true, {
-				forward: true,
-				region: interactiveRegions,
-			})
-		} else {
-			// macOS and others: full window click-through
-			mainWindow.setIgnoreMouseEvents(true, { forward: true })
-		}
-		// Ask renderer for current interactive rects (top bar etc.) so Windows can update regions
-		mainWindow.webContents.send(CHANNELS.REQUEST_INTERACTIVE)
-	} else {
-		mainWindow.setIgnoreMouseEvents(false)
-	}
-
-	/* tell renderer: true = interactive, false = click-through */
-	mainWindow.webContents.send(CHANNELS.MOUSE_UPDATED, !isIgnoringMouseEvents)
+/**
+ * Creates the always-on-top, interactive top bar window.
+ */
+function createTopBarWindow(bounds: Rectangle): BrowserWindow {
+  const window = new BrowserWindow({
+    ...bounds,
+    frame: false,
+    transparent: true,
+    alwaysOnTop: true,
+    focusable: true,
+    resizable: false,
+    fullscreenable: false,
+    movable: false,
+    skipTaskbar: true,
+    show: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, '../preload/index.mjs'),
+    },
+  })
+  enable(window.webContents)
+  window.on('closed', () => (state.windows.topBar = null))
+  return window
 }
+
+/**
+ * Creates the content window, which can be made click-through.
+ */
+function createContentWindow(bounds: Rectangle): BrowserWindow {
+  const window = new BrowserWindow({
+    ...bounds,
+    frame: false,
+    transparent: true,
+    alwaysOnTop: true,
+    focusable: true,
+    show: true,
+    resizable: false,
+    skipTaskbar: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, '../preload/index.mjs'),
+    },
+  })
+  enable(window.webContents)
+  window.setIgnoreMouseEvents(false) // Start interactive
+  window.on('closed', () => (state.windows.content = null))
+  return window
+}
+
+// --- Core Logic ---
+
+/**
+ * Toggles the interactivity of the content window.
+ */
+function toggleInteractivity() {
+  const { content } = state.windows
+  if (!content) return
+
+  state.isInteractive = !state.isInteractive
+  content.setIgnoreMouseEvents(!state.isInteractive, { forward: true })
+  broadcastInteractiveState()
+}
+
+/**
+ * Adjusts the opacity of the content window.
+ */
+function adjustContentOpacity(delta: number) {
+  const { content } = state.windows
+  if (!content) return
+
+  const current = content.getOpacity()
+  const next = Math.min(1, Math.max(0.1, Number((current + delta).toFixed(2))))
+  content.setOpacity(next)
+}
+
+/**
+ * Sends the current interactive state to both renderer processes.
+ */
+function broadcastInteractiveState() {
+  const { topBar, content } = state.windows
+  topBar?.webContents.send(CHANNELS.MOUSE_UPDATED, state.isInteractive)
+  content?.webContents.send(CHANNELS.MOUSE_UPDATED, state.isInteractive)
+}
+
+/**
+ * Recalculates and sets the bounds for both windows based on the primary display.
+ */
+function layoutWindows() {
+  const { topBar, content } = state.windows
+  if (!topBar || !content) return
+
+  const primary = screen.getPrimaryDisplay()
+  const { x, y, width, height } = primary.workArea
+
+  topBar.setBounds({ x, y, width, height: TOP_BAR_HEIGHT })
+  content.setBounds({
+    x,
+    y: y + TOP_BAR_HEIGHT,
+    width,
+    height: Math.max(0, height - TOP_BAR_HEIGHT),
+  })
+}
+
+/**
+ * Ensures the top bar window is always stacked above the content window.
+ */
+function ensureWindowStacking() {
+  const { topBar, content } = state.windows
+  content?.setAlwaysOnTop(true, 'floating')
+  topBar?.setAlwaysOnTop(true, 'screen-saver') // Higher level than 'floating'
+}
+
+// --- Setup and Lifecycle ---
+
+/**
+ * Registers all IPC handlers for communication from renderer processes.
+ */
+function registerIpcHandlers() {
+  ipcMain.on(CHANNELS.TOGGLE_MOUSE, toggleInteractivity)
+  ipcMain.on(CHANNELS.OPACITY_INCREASE, () => adjustContentOpacity(0.1))
+  ipcMain.on(CHANNELS.OPACITY_DECREASE, () => adjustContentOpacity(-0.1))
+  ipcMain.on('exit-app', () => app.quit())
+}
+
+/**
+ * Registers all global keyboard shortcuts.
+ */
+function registerGlobalShortcuts() {
+  globalShortcut.register('CommandOrControl+Shift+M', toggleInteractivity)
+  globalShortcut.register('Escape', () => app.quit())
+  globalShortcut.register('CommandOrControl+[', () =>
+    adjustContentOpacity(-0.1)
+  )
+  globalShortcut.register('CommandOrControl+]', () => adjustContentOpacity(0.1))
+}
+
+/**
+ * Registers listeners for display events to handle screen changes.
+ */
+function registerScreenEventListeners() {
+  const onDisplayChange = () => {
+    layoutWindows()
+    ensureWindowStacking()
+  }
+  screen.on('display-metrics-changed', onDisplayChange)
+  screen.on('display-added', onDisplayChange)
+  screen.on('display-removed', onDisplayChange)
+}
+
+/**
+ * Creates the windows, loads the content, and sets initial state.
+ */
+function initializeApp() {
+  const { workArea } = screen.getPrimaryDisplay()
+
+  const topBarBounds = { ...workArea, height: TOP_BAR_HEIGHT }
+  const contentBounds = {
+    ...workArea,
+    y: workArea.y + TOP_BAR_HEIGHT,
+    height: workArea.height - TOP_BAR_HEIGHT,
+  }
+
+  state.windows.topBar = createTopBarWindow(topBarBounds)
+  state.windows.content = createContentWindow(contentBounds)
+
+  // Load renderer content
+  const devUrl = (page: string) => `http://localhost:5173/${page}.html`
+  const prodFile = (page: string) =>
+    path.join(__dirname, `../renderer/${page}.html`)
+
+  const topBarPath =
+    process.env.NODE_ENV === 'development'
+      ? devUrl('top-bar')
+      : prodFile('top-bar')
+  const contentPath =
+    process.env.NODE_ENV === 'development' ? devUrl('index') : prodFile('index')
+
+  if (process.env.NODE_ENV === 'development') {
+    state.windows.topBar.loadURL(topBarPath)
+    state.windows.content.loadURL(contentPath)
+  } else {
+    state.windows.topBar.loadFile(topBarPath)
+    state.windows.content.loadFile(contentPath)
+  }
+
+  // Broadcast initial state after windows load
+  state.windows.topBar.webContents.on(
+    'did-finish-load',
+    broadcastInteractiveState
+  )
+  state.windows.content.webContents.on(
+    'did-finish-load',
+    broadcastInteractiveState
+  )
+
+  ensureWindowStacking()
+}
+
+// --- App Lifecycle Events ---
 
 app.whenReady().then(() => {
-	createWindow()
-})
+  initializeApp()
+  registerIpcHandlers()
+  registerGlobalShortcuts()
+  registerScreenEventListeners()
 
-app.on('will-quit', () => {
-	// Unregister all shortcuts when app is about to quit
-	globalShortcut.unregisterAll()
+  app.on('activate', () => {
+    if (!state.windows.topBar && !state.windows.content) {
+      initializeApp()
+    }
+  })
 })
 
 app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		app.quit()
-	}
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
 })
 
-app.on('activate', () => {
-	if (BrowserWindow.getAllWindows().length === 0) {
-		createWindow()
-	}
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll()
 })
-
-/* Directly set ignore state from renderer hover events (mouseenter/leave on top bar) */
-ipcMain.on(
-	CHANNELS.SET_IGNORE,
-	(
-		_event: Electron.IpcMainEvent,
-		ignore: boolean,
-		options?: { forward: boolean },
-	) => {
-		if (mainWindow) {
-			mainWindow.setIgnoreMouseEvents(ignore, options)
-		}
-	},
-)

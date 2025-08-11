@@ -25,6 +25,12 @@ export default defineConfig({
 		// Make sure Tailwind can see TSX/HTML content via Vite (v4 uses CSS-first config)
 		build: {
 			outDir: path.join(__dirname, 'dist/renderer'),
+			rollupOptions: {
+				input: {
+					main: path.join(__dirname, 'src/renderer/index.html'),
+					'top-bar': path.join(__dirname, 'src/renderer/top-bar.html'),
+				},
+			},
 		},
 		server: {
 			host: true,
