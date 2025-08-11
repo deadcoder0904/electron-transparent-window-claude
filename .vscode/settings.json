@@ -1,21 +1,22 @@
 {
-	"deno.enable": false,
-	"deno.lint": false,
-	"deno.unstable": [],
-	"typescript.suggest.completeFunctionCalls": false,
-	"javascript.suggest.completeFunctionCalls": false,
+  "deno.enable": false,
+  "deno.lint": false,
+  "deno.unstable": [],
+  "typescript.suggest.completeFunctionCalls": false,
+  "javascript.suggest.completeFunctionCalls": false,
 
-	"typescript.inlayHints.functionLikeReturnTypes.enabled": false,
-	"javascript.inlayHints.functionLikeReturnTypes.enabled": false,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": false,
+  "javascript.inlayHints.functionLikeReturnTypes.enabled": false,
 
-	"typescript.inlayHints.parameterNames.enabled": "none",
-	"javascript.inlayHints.parameterNames.enabled": "none",
+  "typescript.inlayHints.parameterNames.enabled": "none",
+  "javascript.inlayHints.parameterNames.enabled": "none",
 
-	"typescript.inlayHints.parameterTypes.enabled": false,
-	"javascript.inlayHints.parameterTypes.enabled": false,
+  "typescript.inlayHints.parameterTypes.enabled": false,
+  "javascript.inlayHints.parameterTypes.enabled": false,
 
-	"typescript.inlayHints.variableTypes.enabled": false,
-	"javascript.inlayHints.variableTypes.enabled": false,
+  "typescript.inlayHints.variableTypes.enabled": false,
+  "javascript.inlayHints.variableTypes.enabled": false,
 
-	"biome.enabled": false
+  "biome.enabled": false,
+  "kiroAgent.configureMCP": "Disabled"
 }
