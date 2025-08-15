@@ -8,6 +8,10 @@ export function useClickThroughGuard() {
 	const isInteractive = useInteractivity()
 
 	useEffect(() => {
+		const api = (window as any).electronAPI
+		if (!api || typeof api.setMouseIgnore !== 'function') {
+			return () => {}
+		}
 		let lastIgnore = false
 		let lastX: number | null = null
 		let lastY: number | null = null
@@ -15,7 +19,9 @@ export function useClickThroughGuard() {
 		const setIgnore = (ignore: boolean) => {
 			if (ignore === lastIgnore) return
 			lastIgnore = ignore
-			window.electronAPI.setMouseIgnore(ignore)
+			try {
+				api.setMouseIgnore(ignore)
+			} catch {}
 		}
 
 		const isElementInteractive = (el: Element | null): boolean => {

@@ -54,11 +54,7 @@ export default function TopBar() {
 				>
 					{LABELS.OPACITY_INCREASE}
 				</TopBarButton>
-				<TopBarButton
-					id='exit-btn'
-					onClick={onExit}
-					aria-label={LABELS.EXIT}
-				>
+				<TopBarButton id='exit-btn' onClick={onExit} aria-label={LABELS.EXIT}>
 					{LABELS.EXIT}
 				</TopBarButton>
 			</div>

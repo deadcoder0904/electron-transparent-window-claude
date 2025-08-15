@@ -6,14 +6,15 @@ export function useInteractivity(): boolean {
 	const [isInteractive, setIsInteractive] = useState(true)
 
 	useEffect(() => {
-		// Subscribe to updates from the main process.
-		const unsubscribe = window.electronAPI.onToggleMouseUpdated(
-			(newIsInteractive) => {
+		const api = (window as any).electronAPI
+		if (!api || typeof api.onToggleMouseUpdated !== 'function') {
+			return () => {}
+		}
+		const unsubscribe = api.onToggleMouseUpdated(
+			(newIsInteractive: boolean) => {
 				setIsInteractive(newIsInteractive)
 			},
 		)
-
-		// Unsubscribe on unmount.
 		return unsubscribe
 	}, []) // Empty dependency array ensures this runs only once.
 
