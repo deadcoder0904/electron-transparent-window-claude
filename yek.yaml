@@ -1,10 +1,10 @@
 # Add patterns to ignore (in addition to .gitignore)
 ignore_patterns:
-  - dist/**
-  - bun.lock
-  - yek.yaml
-  - release/**
-  - ai/**
+ - dist/**
+ - bun.lock
+ - yek.yaml
+ - release/**
+ - ai/**
 
 # Configure Git-based priority boost (optional)
 git_boost_max: 50 # Maximum score boost based on Git history (default: 100)
@@ -12,12 +12,12 @@ git_boost_max: 50 # Maximum score boost based on Git history (default: 100)
 # Define priority rules for processing order
 # Higher scores are processed first
 priority_rules:
-  - score: 100
-    pattern: package.json
-  - score: 90
-    pattern: '^src/main/'
-  - score: 80
-    pattern: '^src/renderer'
+ - score: 100
+   pattern: package.json
+ - score: 90
+   pattern: '^src/main/'
+ - score: 80
+   pattern: '^src/renderer'
 
 # Define output directory
 output_dir: ./.yek

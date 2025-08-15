@@ -2,7 +2,7 @@
 {
 	"fmt": {
 		"useTabs": true,
-		"indentWidth": 2,
+		"indentWidth": 1,
 		"semiColons": false,
 		"singleQuote": true,
 		"lineWidth": 80,

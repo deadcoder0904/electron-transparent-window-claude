@@ -1,11 +1,7 @@
 // src/renderer/hooks/useInteractivity.ts
 import { useEffect, useState } from 'react'
 
-/**
- * Custom hook to subscribe to the application's interactive state.
- *
- * @returns {boolean} The current interactive state (true = interactive, false = click-through).
- */
+// Subscribe to the app's interactive state
 export function useInteractivity(): boolean {
 	const [isInteractive, setIsInteractive] = useState(true)
 
@@ -17,9 +13,8 @@ export function useInteractivity(): boolean {
 			},
 		)
 
-		// The cleanup function is returned by onToggleMouseUpdated,
-		// ensuring we unsubscribe when the component unmounts.
-		return () => unsubscribe()
+		// Unsubscribe on unmount.
+		return unsubscribe
 	}, []) // Empty dependency array ensures this runs only once.
 
 	return isInteractive
