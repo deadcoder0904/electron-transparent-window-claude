@@ -1,3 +1,6 @@
+// electron-vite config
+// Outputs: dist/main, dist/preload, dist/renderer
+// Renderer inputs: src/renderer/index.html; Dev server: http://localhost:5173
 import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'electron-vite'
@@ -7,7 +10,7 @@ export default defineConfig({
 		build: {
 			outDir: 'dist/main',
 			rollupOptions: {
-				external: ['electron', '@electron/remote'],
+				external: ['electron'],
 			},
 			target: 'node20',
 		},
@@ -19,16 +22,15 @@ export default defineConfig({
 		},
 	},
 	renderer: {
-		// Ensure Vite resolves the renderer root correctly so Tailwind scans templates
+		// Renderer root
 		root: path.join(__dirname, 'src/renderer'),
 		plugins: [tailwindcss()],
-		// Make sure Tailwind can see TSX/HTML content via Vite (v4 uses CSS-first config)
+		// Build inputs
 		build: {
 			outDir: path.join(__dirname, 'dist/renderer'),
 			rollupOptions: {
 				input: {
 					main: path.join(__dirname, 'src/renderer/index.html'),
-					'top-bar': path.join(__dirname, 'src/renderer/top-bar.html'),
 				},
 			},
 		},

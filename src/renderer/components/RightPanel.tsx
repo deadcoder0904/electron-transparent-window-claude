@@ -19,9 +19,7 @@ function twoSum(nums: number[], target: number): number[] {
 // Example:
 console.log(twoSum([2,7,11,15], 9)) // [0,1]`
 
-/**
- * The right panel of the content window, displaying a code block.
- */
+// Right panel content
 export default function RightPanel() {
 	return (
 		<PanelSection id='right' title='RIGHT'>

@@ -2,17 +2,14 @@
 import React from 'react'
 
 type Props = {
-  id: 'left' | 'right'
-  title: string
-  children: React.ReactNode
+	id: 'left' | 'right'
+	title: string
+	children: React.ReactNode
 }
 
-/**
- * A styled container for a content panel section (e.g., left or right).
- * It includes a title and consistent background/border styling.
- */
+// Styled container for a content panel section
 export function PanelSection({ id, title, children }: Props) {
-  let panelClasses = `
+	let panelClasses = `
     relative flex-1 p-6 bg-panel
     backdrop-blur-[var(--section-blur)] backdrop-saturate-105
     before:content-[''] before:absolute before:inset-0 
@@ -22,7 +19,7 @@ export function PanelSection({ id, title, children }: Props) {
     before:pointer-events-none
   `
 
-  const titleClasses = `
+	const titleClasses = `
     inline-flex items-center gap-2 m-0 mb-3 text-sm font-bold 
     uppercase tracking-[0.12em] text-muted 
     after:content-[''] after:inline-block after:w-[66px] after:h-px 
@@ -30,16 +27,16 @@ export function PanelSection({ id, title, children }: Props) {
     after:drop-shadow-[0_0_3px_theme(colors.neon/50%)]
   `
 
-  // Add a right border only to the left panel.
-  if (id === 'left') {
-    panelClasses +=
-      ' border-r border-divider shadow-[12px_0_24px_-20px_rgba(0,0,0,0.8)]'
-  }
+	// Add a right border only to the left panel.
+	if (id === 'left') {
+		panelClasses +=
+			' border-r border-divider shadow-[12px_0_24px_-20px_rgba(0,0,0,0.8)]'
+	}
 
-  return (
-    <section id={id} className={panelClasses.trim()}>
-      <h2 className={titleClasses.trim()}>{title}</h2>
-      {children}
-    </section>
-  )
+	return (
+		<section id={id} className={panelClasses.trim()}>
+			<h2 className={titleClasses.trim()}>{title}</h2>
+			{children}
+		</section>
+	)
 }

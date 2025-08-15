@@ -1,52 +1,52 @@
-/* Design system theme and tokens */
 :root {
-  --bar-height: 56px;
-  --bg-0: #070c16;
-  --bg-1: #0b1224;
-  --bg-2: #0d1325;
-  --text: #cdd7ff;
-  --muted: #7b8aaa;
-  --divider: rgba(255, 255, 255, 0.08);
-  --glow: #00ffd1;
-  --glow-2: #7a5cff;
-  --btn-text: #dafcff;
-  --btn-border: rgba(0, 255, 209, 0.35);
-  --btn-bg: #121a32;
-  --section-blur: 12px;
+	--bar-height: 56px;
+	--bg-0: #070c16;
+	--bg-1: #0b1224;
+	--bg-2: #0d1325;
+	--text: #cdd7ff;
+	--muted: #7b8aaa;
+	--divider: rgba(255, 255, 255, 0.08);
+	--glow: #00ffd1;
+	--glow-2: #7a5cff;
+	--btn-text: #dafcff;
+	--btn-border: rgba(0, 255, 209, 0.35);
+	--btn-bg: #121a32;
+	--section-blur: 12px;
 }
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --radius-lg: 0.5rem;
+	--font-sans:
+		ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	--radius-lg: 0.5rem;
 
-  --color-neon: var(--glow);
-  --color-neon-2: var(--glow-2);
-  --color-panel: var(--bg-0);
-  --color-muted: var(--muted);
-  --color-divider: var(--divider);
-  --color-body: var(--text);
-  --color-btn-text: var(--btn-text);
-  --color-btn-border: var(--btn-border);
-  --color-btn-bg: var(--btn-bg);
-  --color-code-fg: #d6f6ff;
+	--color-neon: var(--glow);
+	--color-neon-2: var(--glow-2);
+	--color-panel: var(--bg-0);
+	--color-muted: var(--muted);
+	--color-divider: var(--divider);
+	--color-body: var(--text);
+	--color-btn-text: var(--btn-text);
+	--color-btn-border: var(--btn-border);
+	--color-btn-bg: var(--btn-bg);
+	--color-code-fg: #d6f6ff;
 
-  --shadow-btn-base: 0 0 0 2px rgba(0, 0, 0, 0.3),
-    0 6px 18px rgba(0, 0, 0, 0.35);
-  --shadow-btn-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-  --shadow-btn-hover: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 12px rgba(0, 255, 209, 0.28), 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-code: inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 0 0 2px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.45),
-    0 0 24px -8px rgba(0, 255, 209, 0.18);
+	--shadow-btn-base:
+		0 0 0 2px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.35);
+	--shadow-btn-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+	--shadow-btn-hover:
+		inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 0 12px rgba(0, 255, 209, 0.28), 0
+		8px 24px rgba(0, 0, 0, 0.45);
+	--shadow-code:
+		inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 0 0 2px rgba(0, 0, 0, 0.35), 0
+		12px 32px rgba(0, 0, 0, 0.45), 0 0 24px -8px rgba(0, 255, 209, 0.18);
 
-  --gradient-panel: linear-gradient(
-    180deg,
-    rgba(18, 24, 44, 0.75),
-    rgba(14, 18, 33, 0.65)
-  );
-  --gradient-code: linear-gradient(135deg, #0d1222 0%, #071017 100%);
-  --gradient-btn: linear-gradient(180deg, var(--btn-bg), #0b1224);
-  --gradient-topbar: linear-gradient(180deg, #121a32 0%, #0d1325 100%);
+	--gradient-panel: linear-gradient(
+		180deg,
+		rgba(18, 24, 44, 0.75),
+		rgba(14, 18, 33, 0.65)
+	);
+	--gradient-code: linear-gradient(135deg, #0d1222 0%, #071017 100%);
+	--gradient-btn: linear-gradient(180deg, var(--btn-bg), #0b1224);
+	--gradient-topbar: linear-gradient(180deg, #121a32 0%, #0d1325 100%);
 }

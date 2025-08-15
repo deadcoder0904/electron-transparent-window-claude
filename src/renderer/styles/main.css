@@ -3,15 +3,15 @@
 @import './base.css';
 
 body {
-  background: var(--bg-0);
+	background: var(--bg-0);
 }
 
 pre::before {
-  content: 'CODE';
-  position: absolute;
-  top: 6px;
-  right: 12px;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--muted);
+	content: 'CODE';
+	position: absolute;
+	top: 6px;
+	right: 12px;
+	font-size: 10px;
+	letter-spacing: 0.12em;
+	color: var(--muted);
 }
